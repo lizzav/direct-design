@@ -57,16 +57,10 @@ export class EstimatorHeaderComponent {
       .pipe(untilDestroyed(this))
       .subscribe((el) => {
         this.estimatorData = el;
-        this.viewContainerRef.clear();
-        if (this.factorsVisible) {
-          this.viewContainerRef.createComponent(EstimatorFactorComponent);
-        }
+        this.createFactor(this.factorsVisible);
       });
     this.tableService.edit.pipe(untilDestroyed(this), distinctUntilChanged()).subscribe((el) => {
-      if (el && this.factorsVisible) {
-        this.viewContainerRef.clear();
-        this.viewContainerRef.createComponent(EstimatorFactorComponent);
-      }
+      this.createFactor(el && this.factorsVisible);
     });
   }
 
@@ -86,10 +80,7 @@ export class EstimatorHeaderComponent {
    */
   public setVisible(): void {
     this.factorsVisible = !this.factorsVisible;
-    this.viewContainerRef.clear();
-    if (this.factorsVisible) {
-      this.viewContainerRef.createComponent(EstimatorFactorComponent);
-    }
+    this.createFactor(this.factorsVisible);
   }
 
   /**
@@ -98,5 +89,16 @@ export class EstimatorHeaderComponent {
    */
   public changeShowTotal(val: boolean): void {
     this.estimatorHeaderService.toggleTotal(val);
+  }
+
+  /**
+   * Очистка и создание компонента
+   * @param cond условие
+   */
+  private createFactor(cond: boolean): void {
+    this.viewContainerRef.clear();
+    if (cond) {
+      this.viewContainerRef.createComponent(EstimatorFactorComponent);
+    }
   }
 }
